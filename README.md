@@ -1,6 +1,16 @@
 # osdms
 Open Source Document Management System
 
+Document Management System that uses the Model View Controller (MVC) framework.
+
+## Features
+The final intent of this project will be to have a self hosted "Dropbox" or "Google Drive" type service.
+
+- Upload files through the web browser.
+- Control who can access these files.
+- Keep track of any changes and store a backup of the documents.
+- Drag and drop file builder that allows for dynamic document building.
+- These documents are then stored as their original source, and a PDF version for portability.
 
 ## Installation and Loading
 ### More to come on this

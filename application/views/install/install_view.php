@@ -16,9 +16,22 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="configuration">
+
                     <form name="userSettingsForm" action="javascript:submitUserSettings();" id="userSettingsForm" class="form-horizontal">
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash() ?>" />
                         <!--User Login Credentials-->
+                        <div class="form-group">
+                            <label class="control-label">First Name<span class="star">&nbsp;*</span></label>
+                            <input type="text" id="firstName" name="firstName" class=" form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Last Name<span class="star">&nbsp;*</span></label>
+                            <input type="text" id="lastName" name="lastName" class=" form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Phone</label>
+                            <input type="phone" id="adminPhone" name="adminPhone" class=" form-control" required>
+                        </div>
                         <div class="form-group">
                             <label class="control-label">Admin Email<span class="star">&nbsp;*</span></label>
                             <input type="email" id="adminEmail" name="adminEmail" class=" form-control" required>

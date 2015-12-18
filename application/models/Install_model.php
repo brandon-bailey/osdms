@@ -6,6 +6,60 @@ class Install_Model extends CI_Model {
 
 	}
 
+	public function createNewUser($data) {
+		if (!$this->session->admin) {
+			$msg = array(
+				'status' => 'error',
+				'msg' => 'You do not have permission to add a new user.',
+			);
+			echo json_encode($msg);
+			exit;
+		}
+
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('adminUsername', 'Username', 'trim|required');
+		$this->form_validation->set_rules('adminEmail', 'Email', 'trim|required');
+		$this->form_validation->set_rules('adminPhone', 'Phone', 'trim|required');
+		$this->form_validation->set_rules('firstName', 'First Name', 'trim|required');
+		$this->form_validation->set_rules('lastName', 'Last Name', 'trim|required');
+
+		if ($this->form_validation->run() == FALSE) {
+			$msg = array(
+				'status' => 'error',
+				'msg' => validation_errors('', ''),
+			);
+			echo json_encode($msg);
+			exit;
+		}
+
+		$data = array(
+			'username' => $this->input->post('adminUsername'),
+			'email' => $this->input->post('adminEmail'),
+			'phone' => $this->input->post('adminPhone'),
+			'department' => $this->input->post('department'),
+			'first_name' => $this->input->post('firstName'),
+			'last_name' => $this->input->post('lastName'),
+			'password' => $this->input->post('adminPassword'),
+			'last_pw_reset' => date('Y-m-d H:i:s'),
+		);
+
+		// Query to insert data in database
+		$this->db->insert('user', $data);
+
+		if ($this->db->affected_rows() === 1) {
+			$this->emailNewUser($data, $this->db->insert_id());
+
+			$msg = array(
+				'status' => 'success',
+				'msg' => 'Successfully created the new user.',
+			);
+			echo json_encode($msg);
+			exit;
+		}
+
+		// end insert new user
+	}
+
 	public function getPhpOptions() {
 
 		$options = array();

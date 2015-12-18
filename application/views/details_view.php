@@ -152,30 +152,30 @@
                             <?php
 if (isset($fileDetail->fileHistory)):
 	foreach ($fileDetail->fileHistory as $item): ?>
-								                                <tr>
-								                                    <td>
-								                                        <font size="-1">
-								                                            <?php echo $item->revision ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
-								                                            <?php echo $item->modifiedOn ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
-								                                            <?php echo $item->firstName ?>
-								                                                <?php echo $item->lastName ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
-								                                            <?php echo $item->note ?>
-								                                        </font>
-								                                    </td>
-								                                </tr>
-								                                <?php
+										                                <tr>
+										                                    <td>
+										                                        <font size="-1">
+										                                            <?php echo $item->revision ?>
+										                                        </font>
+										                                    </td>
+										                                    <td>
+										                                        <font size="-1">
+										                                            <?php echo $item->modifiedOn ?>
+										                                        </font>
+										                                    </td>
+										                                    <td>
+										                                        <font size="-1">
+										                                            <?php echo $item->firstName ?>
+										                                                <?php echo $item->lastName ?>
+										                                        </font>
+										                                    </td>
+										                                    <td>
+										                                        <font size="-1">
+										                                            <?php echo $item->note ?>
+										                                        </font>
+										                                    </td>
+										                                </tr>
+										                                <?php
 endforeach;
 endif;
 ?>
@@ -232,7 +232,7 @@ endif;
                 },
                 function() {
                     $.ajax({
-                        url: 'scripts/imageApi.php',
+                        url: '<?php echo site_url(); ?>scripts/imageApi.php',
                         type: "POST",
                         cache: false,
                         data: ({
@@ -265,7 +265,7 @@ endif;
                 },
                 function() {
                     $.ajax({
-                        url: 'scripts/pdfApi.php',
+                        url: '<?php echo site_url(); ?>scripts/pdfApi.php',
                         type: "POST",
                         cache: false,
                         data: ({

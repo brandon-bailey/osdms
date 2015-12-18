@@ -6,7 +6,7 @@ class Install extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
-
+		$this->load->model('Install_Model', 'install');
 	}
 
 	public function index() {
@@ -16,9 +16,9 @@ class Install extends CI_Controller {
 		$this->load->view('templates/footer');
 	}
 
-	public function userSettings() {
+	public function createUser() {
 		$data = $this->input->post();
-		echo json_encode($data);
+		$this->install->createNewUser($data);
 	}
 
 }

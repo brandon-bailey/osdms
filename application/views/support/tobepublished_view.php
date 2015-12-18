@@ -7,7 +7,7 @@
     <div class="text-center">
 	<h3 style="text-transform: capitalize;"></h3>
 	</div>
-  </div> 
+  </div>
   <div class="modal-body">
   </div>
   <div class="modal-footer">
@@ -21,10 +21,10 @@ $( document ).ready(function() {
 $('.trashable').draggable({
 		revert: "invalid",
 		opacity: 0.7,
-		start: function() {			
+		start: function() {
 			 $('.popover').popover('hide');
 		}
-	});	
+	});
     $( "#trashCan" ).droppable({
 		 accept: ".trashable",
 		 hoverClass: function() {
@@ -39,12 +39,12 @@ $('.trashable').draggable({
 				trashCan.addClass("fa-trash-o");
 			}
 		},
-      drop: function( event, ui ) {	
+      drop: function( event, ui ) {
 			ui.draggable.effect('puff');
 			var elem = ui.draggable.children().find('span.name').html();
-			var id = ui.draggable.children().find('input[name="fileId"]').val(); 		
+			var id = ui.draggable.children().find('input[name="fileId"]').val();
 		$.ajax({
-             url: 'tobepublished/processfile',
+             url: '<?php echo site_url(); ?>tobepublished/processfile',
             type: "POST",
 			data:{<?php echo $this->security->get_csrf_token_name() ?>:'<?php echo $this->security->get_csrf_hash() ?>',selections:id,type:'reject'},
             success: function(data){
@@ -52,10 +52,10 @@ $('.trashable').draggable({
 						$('#commentForm .modal-body').html(data);
 						$('#commentForm').modal('show');
 			}
-        });				
+        });
       }
     });
-	    $( "#authorize" ).droppable({	
+	    $( "#authorize" ).droppable({
 		 accept: ".trashable",
 		 hoverClass: function() {
 			  var authorize = $('#authorize');
@@ -69,14 +69,14 @@ $('.trashable').draggable({
 				authorize.addClass("fa-thumbs-o-up");
 			}
 		},
-      drop: function( event, ui ) {	
+      drop: function( event, ui ) {
 			ui.draggable.effect('clip');
 			var elem = ui.draggable.children().find('span.name').html();
-			var id = ui.draggable.children().find('input[name="fileId"]').val(); 		
+			var id = ui.draggable.children().find('input[name="fileId"]').val();
 				console.log(id);
-				console.log(elem);				
+				console.log(elem);
 		$.ajax({
-            url: 'tobepublished/processfile',
+            url: '<?php echo site_url(); ?>tobepublished/processfile',
             type: "POST",
 			data:{<?php echo $this->security->get_csrf_token_name() ?>:'<?php echo $this->security->get_csrf_hash() ?>',selections:id,type:'authorize'},
             success: function(data){
@@ -84,37 +84,37 @@ $('.trashable').draggable({
 						$('#commentForm .modal-body').html(data);
 						$('#commentForm').modal('show');
 			}
-        });							
+        });
       }
     });
-	
+
 	$('div#commentForm a[name="closeModal"]').on('click', function(){
 		$('form#mainForm')[0].reset();
 		$('#commentForm').modal('hide');
 		$('#commentForm .modal-body').html('');
-		alertify.log('Your request has been canceled, no changes were made.',null);	
+		alertify.log('Your request has been canceled, no changes were made.',null);
 });
 	$('button[name="submit"]').on('click', function(e){
 		e.preventDefault();
 		var submitType = $(this).val();
 		var checks = [];
-		$('input:checkbox:checked').each(function(){ 
+		$('input:checkbox:checked').each(function(){
 				checks.push($(this).val());
-		});  
-		if(!checks.length ==0)	
+		});
+		if(!checks.length ==0)
 		{
 			$.ajax({
 				type:'post',
-				url: "tobepublished/processFile",
+				url: "<?php echo site_url(); ?>tobepublished/processFile",
 				data:{<?php echo $this->security->get_csrf_token_name() ?>:'<?php echo $this->security->get_csrf_hash() ?>',selections:checks,type:submitType},
 				success:function(data){
 						$('#commentForm .modal-header h3').html(submitType + " Files");
 						$('#commentForm .modal-body').html(data);
 						$('#commentForm').modal('show');
 				}
-			})	
+			})
 		}
-				else{					
+				else{
 					alertify.error('You have to select a file before you can proceed',null);
 				}
 });

@@ -338,7 +338,7 @@ function openFinder(div){
             }
         }
     };
-    window.open('../../assets/js/finder/browse.php',
+    window.open('../assets/js/finder/browse.php',
         'kcfinder_image', 'status=0, toolbar=0, location=0, menubar=0, ' +
         'directories=0, resizable=1, scrollbars=0, width=800, height=600'
     );
@@ -350,7 +350,7 @@ $(document).on('ready',function() {
 	restoreData();	
 	var contenthandle = CKEDITOR.replace( 'contenteditor' ,{
 		language: 'en',
-		contentsCss: ['/assets/css/bootstrap.css'], 
+		contentsCss: ['../assets/css/bootstrap.css'], 
 		allowedContent: true
 	});	
 	$(".nav-sidebar .lyrow").draggable({
@@ -571,4 +571,5 @@ $(document).on("click","#saveDocument",function(e){
 	}
 	
    });
+	
 	

@@ -19,6 +19,7 @@ Class User_Model extends CI_Model {
 
 	private static $db;
 	private static $cache;
+
 	public function __construct($id = NULL) {
 		parent::__construct();
 		self::$db = &get_instance()->db;
@@ -37,9 +38,9 @@ Class User_Model extends CI_Model {
 	}
 
 	public function getDetails($return = FALSE) {
-		$this->db->select();
-		$this->db->where('id', $this->id);
-		$results = $this->db->get($this->table_name);
+		$results = $this->db->select()
+			->where('id', $this->id)
+			->get($this->table_name);
 
 		foreach ($results->result() as $result) {
 			$this->id = $result->id;
@@ -395,9 +396,9 @@ Class User_Model extends CI_Model {
 	 * @return array
 	 */
 	public function getAllRejectedFileIds() {
-		$this->db->select('id');
-		$this->db->where('publishable', '-1');
-		$query = $this->db->get('documents');
+		$query = $this->db->select('id')
+			->where('publishable', '-1')
+			->get('documents');
 		return $query->result_array();
 	}
 
@@ -405,10 +406,10 @@ Class User_Model extends CI_Model {
 	 * @return array
 	 */
 	public function getRejectedFileIds() {
-		$this->db->select('id');
-		$this->db->where('publishable', '-1');
-		$this->db->where('owner', $this->id);
-		$query = $this->db->get('documents');
+		$query = $this->db->select('id')
+			->where('publishable', '-1')
+			->where('owner', $this->id)
+			->get('documents');
 		return $query->result_array();
 	}
 
@@ -416,10 +417,10 @@ Class User_Model extends CI_Model {
 	 * @return array
 	 */
 	public function getExpiredFileIds() {
-		$this->db->select('id');
-		$this->db->where('status', '-1');
-		$this->db->where('owner', $this->id);
-		$query = $this->db->get('documents');
+		$query = $this->db->select('id')
+			->where('status', '-1')
+			->where('owner', $this->id)
+			->get('documents');
 		$numFiles = $query->num_rows();
 		foreach ($query->result() as $row) {
 			$fileData = array(
@@ -434,10 +435,10 @@ Class User_Model extends CI_Model {
 	 * @return int
 	 */
 	public function getNumExpiredFiles() {
-		$this->db->select('id');
-		$this->db->where('status', '-1');
-		$this->db->where('owner', $this->id);
-		$query = $this->db->get('documents');
+		$query = $this->db->select('id')
+			->where('status', '-1')
+			->where('owner', $this->id)
+			->get('documents');
 		return $query->num_rows();
 	}
 

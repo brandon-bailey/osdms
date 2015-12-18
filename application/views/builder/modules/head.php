@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 <title>Module Creator</title>
 <link rel="shortcut icon" href="favicon.ico">
-<link href="http://frontiercaredesk.com/css/bootstrap-combined.css" rel="stylesheet" type="text/css">
+
 <link href="assets/css/mdata.css" rel="stylesheet" type="text/css">
 <link href="assets/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="assets/js/jquery.min.js"></script>

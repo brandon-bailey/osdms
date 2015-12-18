@@ -51,7 +51,9 @@ Class Tobepublished_Model extends CI_Model {
 			if (in_array($value, $idArray)) {
 
 				$fileId = $value['id'];
+
 				$newFileObj = new Document_Model($fileId);
+
 				$newUserObj = new User_Model($newFileObj->getOwner());
 
 				$mailTo = $newUserObj->getEmailAddress();
@@ -79,15 +81,16 @@ Class Tobepublished_Model extends CI_Model {
 					);
 
 					$body = $this->load->view('emails/publish_file_email_view', $emailData, TRUE);
+
 					$subject = $newFileObj->getRealName() . ' has been accepted by ' . $fullName;
 
-					$result = $this->email
-						->setFrom($reviewerEmail, $fullName)
-						->addAddress($mailTo, $fullName)
-						->Subject($subject)
-						->msgHTML($body)
-						->send();
+					$this->email->setFrom($reviewerEmail, $fullName);
+					$this->email->addAddress($mailTo, $userFullName);
+					$this->email->Subject = $subject;
+					$this->email->msgHTML($body);
+					$this->email->send();
 				}
+
 				$newFileObj->Publishable(1);
 				$newFileObj->setReviewerComments($reviewerComments);
 				AccessLog_Model::addLogEntry($fileId, 'Y');
@@ -148,12 +151,12 @@ Class Tobepublished_Model extends CI_Model {
 
 					$body = $this->load->view('emails/publish_file_email_view', $emailData, true);
 					$subject = $newFileObj->getRealName() . ' has been rejected by ' . $fullName;
-					$result = $this->email
-						->setFrom($reviewerEmail, $fullName)
-						->addAddress($mailTo, $fullName)
-						->Subject($subject)
-						->msgHTML($body)
-						->send();
+
+					$this->email->setFrom($reviewerEmail, $fullName);
+					$this->email->addAddress($mailTo, $fullName);
+					$this->email->Subject = $subject;
+					$this->email->msgHTML($body);
+					$this->email->send();
 				}
 				$newFileObj->Publishable(-1);
 				$newFileObj->setReviewerComments($reviewerComments);
@@ -175,13 +178,11 @@ Class Tobepublished_Model extends CI_Model {
 		// Also, for getting full html you may use the following internal method:
 		//$body = $this->email->full_html($subject, $message);
 
-		$result = $this->email
-			->setFrom($this->config->item('site_email'))
-			->addAddress('brandondanielbailey@gmail.com')
-			->Subject($subject)
-			->msgHTML($body)
-			->send();
-		print_r($result);
+		$this->email->setFrom($this->config->item('site_email'));
+		$this->email->addAddress('brandondanielbailey@gmail.com');
+		$this->email->Subject = $subject;
+		$this->email->msgHTML($body);
+		$this->email->send();
 		echo '<br />';
 		echo $this->email->print_debugger();
 		exit;
