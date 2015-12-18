@@ -123,7 +123,7 @@ This project relies on numerous other open source projects.
 
 ![PHPMailer](https://raw.github.com/PHPMailer/PHPMailer/master/examples/images/phpmailer.png)
 
-[Bootstrap](http://getbootstrap.com "Twitter Bootstrap")
+![Bootstrap](https://avatars3.githubusercontent.com/u/2918581?v=3&s=200 "Twitter Bootstrap")
 
 [![](http://tannerlinsley.com/memes/chartjs.gif)](http://www.chartjs.org/docs/)
 
