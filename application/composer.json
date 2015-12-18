@@ -1,0 +1,26 @@
+{
+    "name": "brandon-bailey/document-management",
+    "type": "application",
+    "description" : "Document Management System",
+    "keywords": ["Document Management System","Documents", "Brandon Bailey"],
+    "homepage": "https://github.com/brandon-bailey",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brandon Bailey",
+            "email": "brandondanielbailey@gmail.com",
+            "homepage": "https://github.com/brandon-bailey",
+            "role": "Developer"
+        }
+    ],	
+    "require": {
+        "php": ">=5.3",
+        "ext-curl": "*",
+        "knplabs/knp-snappy": "^0.4.1",
+		"pusher/pusher-php-server":"2.2.*",
+		 "chrisboulton/php-resque": "1.2.x"
+    },
+	    "autoload": {
+        "classmap": [ "models/autoload" ]
+    }
+}

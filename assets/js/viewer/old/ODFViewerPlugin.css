@@ -1,0 +1,8 @@
+ /*
+ *Designed by: Brandon Bailey
+ */
+@namespace cursor url(urn:webodf:names:cursor);
+
+.caret {
+    opacity: 0 !important;
+}
