@@ -1,6 +1,10 @@
 # osdms
 Open Source Document Management System
 
+
+## Installation and Loading
+### More to come on this
+
 There is currently no working installation script.
 This is under development. 
 If you want to get going right away, you will need to create your database on your own.
@@ -105,9 +109,17 @@ $config['require_password_reset'] = 0;
 
 ```
 
+
+
+## License
+
+This software is distributed under The MIT License (MIT)
+
+
+## Shout Out
+
 This project relies on numerous other open source projects.
 
-A quick shout out.
 
 ![PHPMailer](https://raw.github.com/PHPMailer/PHPMailer/master/examples/images/phpmailer.png)
 
@@ -120,3 +132,5 @@ A quick shout out.
 [DataTables](https://github.com/DataTables/DataTables)
 
 [wkhtmltopdf and wkhtmltoimage](https://github.com/wkhtmltopdf/wkhtmltopdf)
+
+There are more, this will be updated over time
