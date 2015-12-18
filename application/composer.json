@@ -18,7 +18,8 @@
         "ext-curl": "*",
         "knplabs/knp-snappy": "^0.4.1",
 		"pusher/pusher-php-server":"2.2.*",
-		 "chrisboulton/php-resque": "1.2.x"
+		 "chrisboulton/php-resque": "1.2.x",
+         "phpmailer/phpmailer": "~5.2"
     },
 	    "autoload": {
         "classmap": [ "models/autoload" ]

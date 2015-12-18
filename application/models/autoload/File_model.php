@@ -1,222 +1,216 @@
 <?php
 /**
  * File helper class.
- */ 
-class File_Model
-{ 
+ */
+class File_Model {
 
-    /**
-     * Attempt to get the mime type from a file. This method is horribly
-     * unreliable, due to PHP being horribly unreliable when it comes to
-     * determining the mime type of a file.
-     *
-     * $mime = File::mime($file);
-     *
-     * @param string $filepath file name or path
-     * @param string $realname The real filename of the file (without the path)
-     * @return string mime type on success
-     * @return FALSE on failure
-     */
-    public static function mime($filename, $realname)
-    {
-        // Get the complete path to the file
-        $filename = realpath($filename);
+	/**
+	 * Attempt to get the mime type from a file. This method is horribly
+	 * unreliable, due to PHP being horribly unreliable when it comes to
+	 * determining the mime type of a file.
+	 *
+	 * $mime = File::mime($file);
+	 *
+	 * @param string $filepath file name or path
+	 * @param string $realname The real filename of the file (without the path)
+	 * @return string mime type on success
+	 * @return FALSE on failure
+	 */
+	public static function mime($filename, $realname) {
+		// Get the complete path to the file
+		$filename = realpath($filename);
 
-        // Get the extension from the filename
-        $extension = strtolower(pathinfo($realname, PATHINFO_EXTENSION));
+		// Get the extension from the filename
+		$extension = strtolower(pathinfo($realname, PATHINFO_EXTENSION));
 
-        if (preg_match('/^(?:jpe?g|png|[gt]if|bmp|swf)$/', $extension)) {
-            // Use getimagesize() to find the mime type on images
-            $file = getimagesize($filename);
+		if (preg_match('/^(?:jpe?g|png|[gt]if|bmp|swf)$/', $extension)) {
+			// Use getimagesize() to find the mime type on images
+			$file = getimagesize($filename);
 
-            if (isset($file['mime']))
-                return $file['mime'];
-        }
-        
-        // First lets try finfo
-        if (class_exists('finfo')) {          
-            if ($info = new finfo(defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME)) {
-                return $info->file($filename);
-            } else if ($info = new finfo(defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME, 'magic')) {
-                return $info->file($filename);
-            }      
-        }
+			if (isset($file['mime'])) {
+				return $file['mime'];
+			}
 
-        // No finfo, so lets try mime_content_type
-        if (function_exists('mime_content_type')) {     
-            $mimetype = mime_content_type($filename);
-            if($mimetype) {
-                return $mimetype;
-            }
-        }
+		}
 
-        // Nothing else has worked,lets try the mimetypes global array
-        if (!empty($extension)) {
-            return File::mime_by_ext($extension);
-        }
+		// First lets try finfo
+		if (class_exists('finfo')) {
+			if ($info = new finfo(defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME)) {
+				return $info->file($filename);
+			} else if ($info = new finfo(defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME, 'magic')) {
+				return $info->file($filename);
+			}
+		}
 
-        // Unable to find the mime-type
-        return FALSE;
-    }
+		// No finfo, so lets try mime_content_type
+		if (function_exists('mime_content_type')) {
+			$mimetype = mime_content_type($filename);
+			if ($mimetype) {
+				return $mimetype;
+			}
+		}
 
-    /**
-     * Return the mime type of an extension.
-     *
-     * $mime = File::mime_by_ext('png'); // "image/png"
-     *
-     * @param string $extension php, pdf, txt, etc
-     * @return string mime type on success
-     * @return FALSE on failure
-     */
-    public static function mime_by_ext($extension)
-    {
-        $return = isset($GLOBALS['mimetypes'][$extension]) ? $GLOBALS['mimetypes'][$extension][0] : FALSE;       
-        return $return;
-    }
+		// Nothing else has worked,lets try the mimetypes global array
+		if (!empty($extension)) {
+			return File::mime_by_ext($extension);
+		}
 
-    /**
-     * Lookup MIME types for a file
-     *
-     * @see Kohana_File::mime_by_ext()
-     * @param string $extension Extension to lookup
-     * @return array Array of MIMEs associated with the specified extension
-     */
-    public static function mimes_by_ext($extension)
-    {
-        return isset($GLOBALS['mimetypes'][$extension]) ? ( (array) $GLOBALS['mimetypes'][$extension]) : array();
-    }
+		// Unable to find the mime-type
+		return FALSE;
+	}
 
-    /**
-     * Lookup file extensions by MIME type
-     *
-     * @param string $type File MIME type
-     * @return array File extensions matching MIME type
-     */
-    public static function exts_by_mime($type)
-    {
-        static $types = array();
+	/**
+	 * Return the mime type of an extension.
+	 *
+	 * $mime = File::mime_by_ext('png'); // "image/png"
+	 *
+	 * @param string $extension php, pdf, txt, etc
+	 * @return string mime type on success
+	 * @return FALSE on failure
+	 */
+	public static function mime_by_ext($extension) {
+		$return = isset($GLOBALS['mimetypes'][$extension]) ? $GLOBALS['mimetypes'][$extension][0] : FALSE;
+		return $return;
+	}
 
-        // Fill the static array
-        if (empty($types)) {
-            foreach ($GLOBALS['mimetypes'] as $ext => $mimes) {
-                foreach ($mimes as $mime) {
-                    if ($mime == 'application/octet-stream') {
-                        // octet-stream is a generic binary
-                        continue;
-                    }
+	/**
+	 * Lookup MIME types for a file
+	 *
+	 * @see Kohana_File::mime_by_ext()
+	 * @param string $extension Extension to lookup
+	 * @return array Array of MIMEs associated with the specified extension
+	 */
+	public static function mimes_by_ext($extension) {
+		return isset($GLOBALS['mimetypes'][$extension]) ? ((array) $GLOBALS['mimetypes'][$extension]) : array();
+	}
 
-                    if (!isset($types[$mime])) {
-                        $types[$mime] = array((string) $ext);
-                    } elseif (!in_array($ext, $types[$mime])) {
-                        $types[$mime][] = (string) $ext;
-                    }
-                }
-            }
-        }
+	/**
+	 * Lookup file extensions by MIME type
+	 *
+	 * @param string $type File MIME type
+	 * @return array File extensions matching MIME type
+	 */
+	public static function exts_by_mime($type) {
+		static $types = array();
 
-        return isset($types[$type]) ? $types[$type] : FALSE;
-    }
+		// Fill the static array
+		if (empty($types)) {
+			foreach ($GLOBALS['mimetypes'] as $ext => $mimes) {
+				foreach ($mimes as $mime) {
+					if ($mime == 'application/octet-stream') {
+						// octet-stream is a generic binary
+						continue;
+					}
 
-    /**
-     * Lookup a single file extension by MIME type.
-     *
-     * @param string $type MIME type to lookup
-     * @return mixed First file extension matching or false
-     */
-    public static function ext_by_mime($type)
-    {
-        return current(File::exts_by_mime($type));
-    }
+					if (!isset($types[$mime])) {
+						$types[$mime] = array((string) $ext);
+					} elseif (!in_array($ext, $types[$mime])) {
+						$types[$mime][] = (string) $ext;
+					}
+				}
+			}
+		}
 
-    /**
-     * Split a file into pieces matching a specific size. Used when you need to
-     * split large files into smaller pieces for easy transmission.
-     *
-     * $count = File::split($file);
-     *
-     * @param string $filename file to be split
-     * @param integer $piece_size size, in MB, for each piece to be
-     * @return integer The number of pieces that were created
-     */
-    public static function split($filename, $piece_size = 10)
-    {
-        // Open the input file
-        $file = fopen($filename, 'rb');
+		return isset($types[$type]) ? $types[$type] : FALSE;
+	}
 
-        // Change the piece size to bytes
-        $piece_size = floor($piece_size * 1024 * 1024);
+	/**
+	 * Lookup a single file extension by MIME type.
+	 *
+	 * @param string $type MIME type to lookup
+	 * @return mixed First file extension matching or false
+	 */
+	public static function ext_by_mime($type) {
+		return current(self::exts_by_mime($type));
+	}
 
-        // Write files in 8k blocks
-        $block_size = 1024 * 8;
+	/**
+	 * Split a file into pieces matching a specific size. Used when you need to
+	 * split large files into smaller pieces for easy transmission.
+	 *
+	 * $count = File::split($file);
+	 *
+	 * @param string $filename file to be split
+	 * @param integer $piece_size size, in MB, for each piece to be
+	 * @return integer The number of pieces that were created
+	 */
+	public static function split($filename, $piece_size = 10) {
+		// Open the input file
+		$file = fopen($filename, 'rb');
 
-        // Total number of peices
-        $peices = 0;
+		// Change the piece size to bytes
+		$piece_size = floor($piece_size * 1024 * 1024);
 
-        while (!feof($file)) {
-            // Create another piece
-            $peices += 1;
+		// Write files in 8k blocks
+		$block_size = 1024 * 8;
 
-            // Create a new file piece
-            $piece = str_pad($peices, 3, '0', STR_PAD_LEFT);
-            $piece = fopen($filename . '.' . $piece, 'wb+');
+		// Total number of peices
+		$peices = 0;
 
-            // Number of bytes read
-            $read = 0;
+		while (!feof($file)) {
+			// Create another piece
+			$peices += 1;
 
-            do {
-                // Transfer the data in blocks
-                fwrite($piece, fread($file, $block_size));
+			// Create a new file piece
+			$piece = str_pad($peices, 3, '0', STR_PAD_LEFT);
+			$piece = fopen($filename . '.' . $piece, 'wb+');
 
-                // Another block has been read
-                $read += $block_size;
-            } while ($read < $piece_size);
+			// Number of bytes read
+			$read = 0;
 
-            // Close the piece
-            fclose($piece);
-        }
+			do {
+				// Transfer the data in blocks
+				fwrite($piece, fread($file, $block_size));
 
-        // Close the file
-        fclose($file);
+				// Another block has been read
+				$read += $block_size;
+			} while ($read < $piece_size);
 
-        return $peices;
-    }
+			// Close the piece
+			fclose($piece);
+		}
 
-    /**
-     * Join a split file into a whole file. Does the reverse of [File::split].
-     *
-     * $count = File::join($file);
-     *
-     * @param string $filename split filename, without .000 extension
-     * @return integer The number of pieces that were joined.
-     */
-    public static function join($filename)
-    {
-        // Open the file
-        $file = fopen($filename, 'wb+');
+		// Close the file
+		fclose($file);
 
-        // Read files in 8k blocks
-        $block_size = 1024 * 8;
+		return $peices;
+	}
 
-        // Total number of peices
-        $pieces = 0;
+	/**
+	 * Join a split file into a whole file. Does the reverse of [File::split].
+	 *
+	 * $count = File::join($file);
+	 *
+	 * @param string $filename split filename, without .000 extension
+	 * @return integer The number of pieces that were joined.
+	 */
+	public static function join($filename) {
+		// Open the file
+		$file = fopen($filename, 'wb+');
 
-        while (is_file($piece = $filename . '.' . str_pad($pieces + 1, 3, '0', STR_PAD_LEFT))) {
-            // Read another piece
-            $pieces += 1;
+		// Read files in 8k blocks
+		$block_size = 1024 * 8;
 
-            // Open the piece for reading
-            $piece = fopen($piece, 'rb');
+		// Total number of peices
+		$pieces = 0;
 
-            while (!feof($piece)) {
-                // Transfer the data in blocks
-                fwrite($file, fread($piece, $block_size));
-            }
+		while (is_file($piece = $filename . '.' . str_pad($pieces + 1, 3, '0', STR_PAD_LEFT))) {
+			// Read another piece
+			$pieces += 1;
 
-            // Close the peice
-            fclose($piece);
-        }
+			// Open the piece for reading
+			$piece = fopen($piece, 'rb');
 
-        return $pieces;
-    }
+			while (!feof($piece)) {
+				// Transfer the data in blocks
+				fwrite($file, fread($piece, $block_size));
+			}
+
+			// Close the peice
+			fclose($piece);
+		}
+
+		return $pieces;
+	}
 
 }

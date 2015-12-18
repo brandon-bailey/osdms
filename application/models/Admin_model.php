@@ -1,7 +1,5 @@
 <?php
 
-Class Admin_model extends CI_Model {
- 
+Class Admin_Model extends CI_Model {
 
 }
-

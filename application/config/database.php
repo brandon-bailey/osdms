@@ -57,16 +57,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
-*/
+ */
 
 $active_group = 'default';
+
 $query_builder = TRUE;
- 
+
 $db['default'] = array(
-	'dsn'	=> '',
+	'dsn' => '',
 	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'Fall2010$',
+	'username' => 'USERNAME',
+	'password' => 'PASSWORD',
 	'database' => 'dms_database',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'dms_',
@@ -81,7 +82,7 @@ $db['default'] = array(
 	'compress' => FALSE,
 	'stricton' => FALSE,
 	'failover' => array(),
-	'save_queries' => TRUE
+	'save_queries' => TRUE,
 );
 /* End of file database.php */
 /* Location: ./application/config/database.php */
