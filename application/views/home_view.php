@@ -2,9 +2,9 @@
     <div class="container">
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-exclamation-triangle fa-2x"></i> <strong>
-					<a href="<?php echo base_url() ?>index.php/tobepublished">
-					Documents waiting to be reviewed</a>: <?php echo $reviewCount ?>
-					</strong>
+                    <a href="<?php echo base_url() ?>index.php/tobepublished">
+                    Documents waiting to be reviewed</a>: <?php echo $reviewCount ?>
+                    </strong>
             <button type="button" class="clearfix close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
@@ -15,9 +15,9 @@
             <div class="alert alert-warning" role="alert">
                 <i class="fa fa-exclamation-triangle fa-2x"></i>
                 <strong>
-					<a href="<?php echo base_url() ?>index.php/file/showrejects">
-					Documents Rejected </a>: <?php echo sizeof($rejectedFiles) ?>
-					</strong>
+                    <a href="<?php echo base_url() ?>index.php/file/showrejects">
+                    Documents Rejected </a>: <?php echo sizeof($rejectedFiles) ?>
+                    </strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true"><i class="fa fa-times"></i></span>
                 </button>
@@ -28,7 +28,7 @@
                 <div class="alert alert-danger" role="alert">
                     <i class="fa fa-exclamation-triangle fa-2x"></i>
                     <a href="#">
-	Documents Expired:<?php echo sizeof($expiredFiles) ?></a>
+    Documents Expired:<?php echo sizeof($expiredFiles) ?></a>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true"><i class="fa fa-times"></i></span>
                     </button>
@@ -70,17 +70,17 @@ if (isset($fileList[0]->showCheckbox)):
 	if ($fileList[0]->showCheckbox === TRUE):
 		$form = 1;
 		?>
-																																				                    <div class="container">
-																																				                        <div class="row">
-																																				                            <div class="col-md-6 text-center">
-																																				                                <div id="trashDiv"><i id="trashCan" class="droppable fa fa-trash-o text-danger fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $trashCanTitle; ?>"></i></div>
-																																				                            </div>
-																																				                            <div class="col-md-6 text-center">
-																																				                                <div id="authorizeDiv"><i id="authorize" class="droppable fa fa-thumbs-o-up text-success fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $authorizeButtonTitle; ?>"></i></div>
-																																				                            </div>
-																																				                        </div>
-																																				                    </div>
-																																				                    <?php
+				                    <div class="container">
+				                        <div class="row">
+				                            <div class="col-md-6 text-center">
+				                                <div id="trashDiv"><i id="trashCan" class="droppable fa fa-trash-o text-danger fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $trashCanTitle; ?>"></i></div>
+				                            </div>
+				                            <div class="col-md-6 text-center">
+				                                <div id="authorizeDiv"><i id="authorize" class="droppable fa fa-thumbs-o-up text-success fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $authorizeButtonTitle; ?>"></i></div>
+				                            </div>
+				                        </div>
+				                    </div>
+				                    <?php
 	endif;
 endif;?>
                         <div class="container-fluid">
@@ -91,32 +91,28 @@ endif;?>
                                             <?php echo form_open('', 'class="form" method="post" id="mainForm"') ?>
                                                 <?php
 foreach ($fileList as $item):
-	if (is_file($this->config->item('dataDir') . 'thumbnails/' . $item->uniqueName . '.jpg')):
-		$thumbnail = base_url() . $this->config->item('dataDir') . 'thumbnails/' . $item->uniqueName . '.jpg';
-	else:
-		$thumbnail = base_url() . 'assets/images/no-image-available.jpg';
-	endif;
-	?>
-																		                                                    <li class="files trashable" id="fileItem_<?php echo $item->id ?>" data-toggle="popover" title="<?php echo $item->fileName; ?>" data-content="<img src='<?php echo $thumbnail; ?>'>">
-																		                                                        <a href="<?php echo $item->detailsLink ?>">
-																					<span class="icon file f-<?php echo $item->ext; ?>"><?php echo $item->ext; ?></span>
-																						<span class="name"><?php echo $item->fileName; ?></span>
-																							<span class="details">Size : <?php echo $item->fileSize; ?></span>
-																									<input type="hidden" name="fileId" value="<?php echo $item->id ?>">
-																							<span class="description"><?php echo $item->description; ?></span>
-																								<span class="date">Created Date: <?php echo $item->createdDate; ?></span>
+
+?>
+                                                    <li class="files trashable" id="fileItem_<?php echo $item->id ?>" data-toggle="popover" title="<?php echo $item->fileName; ?>" data-content="<img src='<?php echo $item->thumbnail; ?>'>">
+                                                        <a href="<?php echo $item->detailsLink ?>">
+                                                                                    <span class="icon file f-<?php echo $item->ext; ?>"><?php echo $item->ext; ?></span>
+                                                                                        <span class="name"><?php echo $item->fileName; ?></span>
+                                                                                            <span class="details">Size : <?php echo $item->fileSize; ?></span>
+                                                                                                    <input type="hidden" name="fileId" value="<?php echo $item->id ?>">
+                                                                                            <span class="description"><?php echo $item->description; ?></span>
+                                                                                                <span class="date">Created Date: <?php echo $item->createdDate; ?></span>
 
 
-																									<span class="owner">Author: <?php echo $item->ownerName; ?></span>
+                                                                                                    <span class="owner">Author: <?php echo $item->ownerName; ?></span>
 
-																									<span class="lock">
-																			                <?php if ($item->lock == false): ?>
-																			                   <i class="fa fa-unlock fa-2x"></i>
-																							<?php else: ?>
+                                                                                                    <span class="lock">
+                                                                                            <?php if ($item->lock == false): ?>
+                                                                                               <i class="fa fa-unlock fa-2x"></i>
+                                                                                            <?php else: ?>
                     <i class="fa fa-lock fa-2x"></i>
-			<?php endif;?>
+            <?php endif;?>
             </span>
-			     </a>
+                 </a>
                                                     </li>
                                                     <?php
 endforeach;

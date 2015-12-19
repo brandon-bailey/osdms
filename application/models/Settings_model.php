@@ -70,10 +70,13 @@ class Settings_Model extends CI_Model {
 	 * @param array $data Array of values to be saved ($key,$value)
 	 * @return bool
 	 */
-	public function save($data) {
+	public function save($configFile, $data) {
+
 		$this->load->helper('file');
-		echo json_encode($data);
-		$configFile = APPPATH . 'config/custom.php';
+
+		$configFile = APPPATH . 'config/' . $configFile . '.php';
+
+		echo json_encode($configFile);
 
 		write_file($configFile, "<?php \n defined('BASEPATH') OR exit('No direct script access allowed');\n\n", 'w');
 
@@ -82,7 +85,6 @@ class Settings_Model extends CI_Model {
 			if ($key == 'site_logo') {
 				$this->modifyImage($value);
 			}
-
 			$path = '';
 			if ($key == 'pdf_binary' OR $key == 'image_binary') {
 				$path = "APPPATH .";
@@ -97,7 +99,9 @@ class Settings_Model extends CI_Model {
 			} else {
 				$value = "'" . $value . "'";
 			}
-			write_file($configFile, '$config[' . "'" . $key . "'" . '] =  ' . $path . $value . ';' . PHP_EOL . PHP_EOL, 'a');
+			if ($key !== 'file') {
+				write_file($configFile, '$config[' . "'" . $key . "'" . '] =  ' . $path . $value . ';' . PHP_EOL . PHP_EOL, 'a');
+			}
 		}
 		return true;
 	}
@@ -215,6 +219,43 @@ class Settings_Model extends CI_Model {
 		}
 
 		return $data;
+	}
+
+	public function getAllowedFileTypes() {
+		$loaded = FALSE;
+
+		foreach ($this->_config_paths as $path) {
+			$file_path = $path . 'config/' . $file . '.php';
+			if (in_array($file_path, $this->is_loaded, TRUE)) {
+				return TRUE;
+			}
+
+			if (!file_exists($file_path)) {
+				continue;
+			}
+
+			include $file_path;
+
+			if (!isset($config) OR !is_array($config)) {
+				if ($fail_gracefully === TRUE) {
+					return FALSE;
+				}
+
+				show_error('Your ' . $file_path . ' file does not appear to contain a valid configuration array.');
+			}
+
+			return $this->config = $config;
+
+			$this->is_loaded[] = $file_path;
+			$config = NULL;
+			$loaded = TRUE;
+		}
+		if ($loaded === TRUE) {
+			return TRUE;
+		} elseif ($fail_gracefully === TRUE) {
+			return FALSE;
+		}
+		show_error('The configuration file ' . $file . '.php does not exist.');
 	}
 
 }

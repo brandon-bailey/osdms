@@ -55,6 +55,9 @@ There are numerous other default settings that should be changed depending on yo
 These configuration options can be found 
 ["/application/config/custom.php"](https://github.com/brandon-bailey/osdms/blob/master/application/config/custom.php)
 
+
+If you have your installation up and running you can navigate to http://<yourdomain>/admin/editsettings
+
 ```php
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');

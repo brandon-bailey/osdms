@@ -46,6 +46,8 @@ class Global_Functions extends CI_Model {
 					$uniqueName = $fileObj->getBaseName();
 					$deleteLink = $fileObj->isArchived();
 
+					$thumbnail = $fileObj->getThumbnail();
+
 					//Get the file size in bytes.
 					if ($deleteLink) {
 						$fileSize = $this->displayFilesize($this->config->item('archiveDir') . $location);
@@ -103,6 +105,7 @@ class Global_Functions extends CI_Model {
 						'uniqueName' => $uniqueName,
 						'ext' => $fileExt,
 						'deleteLink' => $deleteLink,
+						'thumbnail' => $thumbnail,
 					);
 				}
 			}

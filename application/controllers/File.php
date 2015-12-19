@@ -107,4 +107,24 @@ class File extends CI_Controller {
 		echo json_encode($msg);
 	}
 
+	public function createThumbnail() {
+
+		$this->load->model('Image_Model');
+		$fileId = $this->input->post('id');
+
+		if ($fileId) {
+			$this->Image_Model->newThumbnail($fileId);
+		}
+	}
+
+	public function createPdf() {
+
+		$this->load->model('Pdf_Model');
+		$fileId = $this->input->post('id');
+
+		if ($fileId) {
+			$this->Pdf_Model->newPdf($fileId);
+		}
+	}
+
 }

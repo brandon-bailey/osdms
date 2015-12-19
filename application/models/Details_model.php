@@ -29,10 +29,11 @@ Class Details_Model extends CI_Model {
 		$location = $fileDataObj->getLocation();
 		$fileExt = $fileDataObj->getExt();
 		$file = $fileDataObj->getBaseName();
+		$thumbnail = $fileDataObj->getThumbnail();
 		$lmimetype = File_Model::mime_by_ext($fileExt);
 		$viewFileLink = $this->config->item('dataDir') . $location;
 		$historyLink = 'history/' . $this->requestId;
-		$viewInBrowser = '';
+		$viewInBrowser = NULL;
 		$fileUnderReview = (($publishable == -1) ? TRUE : FALSE);
 		$editFileLink = NULL;
 
@@ -174,6 +175,7 @@ Class Details_Model extends CI_Model {
 			'fileHistory' => $fileHistory,
 			'deleteLink' => $deleteLink,
 			'viewInBrowser' => $viewInBrowser,
+			'thumbnail' => $thumbnail,
 		);
 
 		return json_encode($fileDetail);

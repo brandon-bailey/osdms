@@ -3,7 +3,7 @@
         <div class="btn-group pull-right">
             <a href="#" role="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i></a>
             <ul class="dropdown-menu" role="menu">
-                <?php if ($fileDetail->viewInBrowser !== ''): ?>
+                <?php if ($fileDetail->viewInBrowser !== NULL): ?>
                     <li><a href="#" id="pdfPreview" data-toggle="modal" data-target="#previewPDF"> View</a></li>
                     <?php endif;?>
                         <?php if ($fileDetail->checkOutLink !== ''): ?>
@@ -69,12 +69,18 @@
                     <tr>
                         <th valign=top align=right>Original:</th>
                         <td>
-                            <?php if ($fileDetail->viewInBrowser !== ''): ?>
+                            <?php if ($fileDetail->viewInBrowser !== NULL): ?>
                                 <a href="#" id="pdfPreview" data-toggle="modal" data-target="#previewPDF">
                                     <i class="fa fa-file-code-o fa-lg"></i>
                                     <small> View in Browser</small>
                                 </a>
                                 <?php endif;?>
+                                    <?php if ($fileDetail->ext == "png" || $fileDetail->ext == "jpg"): ?>
+                                        <a href="#" id="imagePreview" data-toggle="modal" data-target="#previewImage">
+                                            <i class="fa fa-image fa-lg"></i>
+                                            <small> View in Browser</small>
+                                        </a>
+                                        <?php endif;?>
                         </td>
                     </tr>
                     <tr>
@@ -152,30 +158,30 @@
                             <?php
 if (isset($fileDetail->fileHistory)):
 	foreach ($fileDetail->fileHistory as $item): ?>
-										                                <tr>
-										                                    <td>
-										                                        <font size="-1">
-										                                            <?php echo $item->revision ?>
-										                                        </font>
-										                                    </td>
-										                                    <td>
-										                                        <font size="-1">
-										                                            <?php echo $item->modifiedOn ?>
-										                                        </font>
-										                                    </td>
-										                                    <td>
-										                                        <font size="-1">
-										                                            <?php echo $item->firstName ?>
-										                                                <?php echo $item->lastName ?>
-										                                        </font>
-										                                    </td>
-										                                    <td>
-										                                        <font size="-1">
-										                                            <?php echo $item->note ?>
-										                                        </font>
-										                                    </td>
-										                                </tr>
-										                                <?php
+								                                <tr>
+								                                    <td>
+								                                        <font size="-1">
+								                                            <?php echo $item->revision ?>
+								                                        </font>
+								                                    </td>
+								                                    <td>
+								                                        <font size="-1">
+								                                            <?php echo $item->modifiedOn ?>
+								                                        </font>
+								                                    </td>
+								                                    <td>
+								                                        <font size="-1">
+								                                            <?php echo $item->firstName ?>
+								                                                <?php echo $item->lastName ?>
+								                                        </font>
+								                                    </td>
+								                                    <td>
+								                                        <font size="-1">
+								                                            <?php echo $item->note ?>
+								                                        </font>
+								                                    </td>
+								                                </tr>
+								                                <?php
 endforeach;
 endif;
 ?>
@@ -228,28 +234,26 @@ endif;
                     showCancelButton: true,
                     confirmButtonColor: '#DD6B55',
                     confirmButtonText: 'Yes, create thumbnail!',
-                    closeOnConfirm: false
+                    closeOnConfirm: true
                 },
                 function() {
                     $.ajax({
-                        url: '<?php echo site_url(); ?>scripts/imageApi.php',
+                        url: '<?php echo site_url(); ?>file/createThumbnail',
                         type: "POST",
+                        dataType: 'json',
                         cache: false,
                         data: ({
                             id: '<?php echo $this->requestId ?>',
-<?php echo $this->security->get_csrf_token_name(); ?>:'<?php echo $this->security->get_csrf_hash() ?>'
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash() ?>'
                         }),
-                        success: function() {
-                            console.log('Thumbnail has successfully been saved.');
+                        success: function(data) {
+                            if (data.status == "error") {
+                                alertify.error(data.msg, null, 0);
+                            } else if (data.status == "success") {
+                                alertify.success(data.msg, null, 0);
+                            }
                         }
                     });
-                    swal({
-                        title: "Created!",
-                        text: "Your thumbnail has been created for <?php echo $fileDetail->realName ?>!",
-                        type: "success",
-                        imageUrl: "<?php echo base_url() . $this->config->item('dataDir') ?>thumbnails/<?php echo $fileDetail->file ?>.jpg"
-                    });
-                    alertify.success('A new thumbnail of <?php echo $fileDetail->realName ?> has been created!');
                 });
         });
 
@@ -265,18 +269,23 @@ endif;
                 },
                 function() {
                     $.ajax({
-                        url: '<?php echo site_url(); ?>scripts/pdfApi.php',
+                        url: '<?php echo site_url(); ?>file/createPdf',
                         type: "POST",
+                        dataType: "json",
                         cache: false,
                         data: ({
                             id: '<?php echo $this->requestId ?>',
-<?php echo $this->security->get_csrf_token_name(); ?>:'<?php echo $this->security->get_csrf_hash() ?>'
+                            <?php echo $this->security->get_csrf_token_name(); ?>: '<?php echo $this->security->get_csrf_hash() ?>'
                         }),
                         success: function(data) {
-                            console.log('PDF has successfully been created.');
+                            if (data.status == "error") {
+                                alertify.error(data.msg, null, 0);
+                            } else if (data.status == "success") {
+                                alertify.success(data.msg, null, 0);
+                            }
                         }
                     });
-                    alertify.success('A new PDF of <?php echo $fileDetail->realName ?> has been created!');
+
                 });
         });
 
@@ -319,8 +328,19 @@ endif;
             $('#previewPDF').modal('show');
         });
 
+        $(document).on("click", '#imagePreview', function() {
+            var previewModal = $('.modal-body').has('iframe').length;
+            if (previewModal == 0) {
+                var viewIframe = '<img src="<?php echo base_url() . $this->config->item("dataDir") . $fileDetail->location ?>">';
+
+                $('.modal-body').append(viewIframe);
+            }
+            $('#previewImage').modal('show');
+        });
+
         $(document).on("click", '#closeModal', function() {
             $('.modal-body iframe').remove();
+            $('.modal-body img').remove();
         });
     });
     </script>

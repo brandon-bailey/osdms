@@ -1,5 +1,4 @@
 <?php
-
 Class Document_Model extends CI_Model {
 	public $category;
 	public $owner;
@@ -21,6 +20,7 @@ Class Document_Model extends CI_Model {
 	public $modules;
 	public $docId;
 	public $name;
+	public $thumbnail;
 
 	public function __construct($id) {
 		parent::__construct();
@@ -101,12 +101,16 @@ Class Document_Model extends CI_Model {
 	 * return thumbnail url
 	 */
 	public function getThumbnail() {
-		$thumbnail = $this->config->item('dataDir') . 'thumbnails/' . $this->getBaseName() . '.jpg';
-		if (is_file($thumbnail)) {
-			return base_url() . $thumbnail;
+
+		if (file_exists(FCPATH . $this->config->item('dataDir') . 'thumbnails/' . $this->getBaseName() . '.jpg')) {
+			return base_url() . $this->config->item('dataDir') . 'thumbnails/' . $this->getBaseName() . '.jpg';
 		} else {
-			$thumbnail = base_url() . 'assets/images/no-image-available.jpg';
-			return $thumbnail;
+			if ($this->isFileImage()) {
+				return base_url() . $this->config->item('dataDir') . $this->getLocation();
+			} else {
+				return base_url() . 'assets/images/no-image-available.jpg';
+			}
+
 		}
 
 	}
@@ -430,7 +434,7 @@ Class Document_Model extends CI_Model {
 
 	/**
 	 *finish checking in the file
-	 * @param int $status , int $publishable , string $fileName
+	 * @param int $publishable , string $fileName
 	 */
 	public function checkIn($publishable, $fileName) {
 		$data = array(
@@ -444,7 +448,7 @@ Class Document_Model extends CI_Model {
 
 	/**
 	 * get information from the checked out file
-	 * @param array with description and realname
+	 * @param int $uid
 	 */
 	public function getCheckedOutFileInfo($uid) {
 		$this->db->select('description,realname');
@@ -472,8 +476,8 @@ Class Document_Model extends CI_Model {
 
 	/**
 	 * Return the dept rights on this file for a given department
-	 * @param int $deptId
-	 * @return int $rights
+	 * @param int $dept_id
+	 * @return int
 	 */
 	public function getDeptRights($deptId) {
 		$this->db->select('rights');
@@ -489,15 +493,15 @@ Class Document_Model extends CI_Model {
 
 	/**
 	 * convert an array of user id into an array of user objects
-	 * @param array $uidArray
+	 * @param array $uid_array
 	 * @return array
 	 */
-	public function toUserOBJs($uidArray) {
-		$userObjArray = array();
-		for ($i = 0; $i < sizeof($uidArray); $i++) {
-			$userObjArray[$i] = new User_Model($uidArray[$i]);
+	public function toUserOBJs($uid_array) {
+		$UserOBJ_array = array();
+		for ($i = 0; $i < sizeof($uid_array); $i++) {
+			$UserOBJ_array[$i] = new User_Model($uid_array[$i]);
 		}
-		return $userObjArray;
+		return $UserOBJ_array;
 	}
 
 	/**
@@ -633,6 +637,13 @@ Class Document_Model extends CI_Model {
 		$this->db->where('id', $this->docId);
 		$this->db->update($this->docTable, $location);
 		return true;
+	}
+
+	public function isFileImage($file = NULL) {
+
+		$filePath = $file ? $file : FCPATH . $this->config->item('dataDir') . $this->getLocation();
+		return getimagesize($filePath) ? true : false;
+
 	}
 
 }

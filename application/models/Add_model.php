@@ -195,8 +195,10 @@ Class Add_Model extends CI_Model {
 				//create PDF from HTML
 				$html = $this->load->file(FCPATH . $this->config->item('dataDir') . $file['newName'], TRUE);
 				$newPdf = ($this->config->item('dataDir') . 'pdf/' . $file['rawName'] . '.pdf');
+
 				$options = array(
 					'viewport-size' => '1250',
+					'user-style-sheet' => FCPATH . 'assets/css/bootstrap.css',
 					'load-error-handling' => 'skip',
 				);
 
@@ -292,12 +294,12 @@ Class Add_Model extends CI_Model {
 			$subject = $fileObj->getRealName() . ' has been submitted by ' . $fullName;
 			foreach ($emailList as $email) {
 				if ($email['email'] != '' && $email['fullname'] != '') {
-					$result = $this->email
-						->from($from, $fullName)
-						->to($email['email'], $email['fullname'])
-						->subject($subject)
-						->message($body)
-						->send();
+
+					$this->email->from($from, $fullName);
+					$this->email->to($email['email'], $email['fullname']);
+					$this->email->subject = $subject;
+					$this->email->message($body);
+					$this->email->send();
 				}
 			}
 		}
