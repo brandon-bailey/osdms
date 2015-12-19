@@ -1,4 +1,4 @@
-<?php if (isset($reviewCount) && $reviewCount > 0): ?>
+<?php if (isset($reviewCount) && $reviewCount > 0) : ?>
     <div class="container">
         <div class="alert alert-warning" role="alert">
             <i class="fa fa-exclamation-triangle fa-2x"></i> <strong>
@@ -10,7 +10,7 @@
             </button>
         </div>
     </div>
-    <?php elseif (is_array($rejectedFiles) && sizeof($rejectedFiles) !== 0): ?>
+    <?php elseif (isset($rejectedFiles) && is_array($rejectedFiles) && sizeof($rejectedFiles) !== 0) : ?>
         <div class="container">
             <div class="alert alert-warning" role="alert">
                 <i class="fa fa-exclamation-triangle fa-2x"></i>
@@ -23,7 +23,7 @@
                 </button>
             </div>
         </div>
-        <?php elseif (is_array($expiredFiles) && sizeof($expiredFiles) > 0): ?>
+        <?php elseif (isset($rejectedFiles) && is_array($expiredFiles) && sizeof($expiredFiles) > 0) : ?>
             <div class="container">
                 <div class="alert alert-danger" role="alert">
                     <i class="fa fa-exclamation-triangle fa-2x"></i>
@@ -36,7 +36,7 @@
             </div>
             <?php
 endif;
-if ($fileList !== 0):
+if ($fileList !== 0) :
 ?>
                 <!--variables found in functions.php list_files fucntion-->
                 <link href="<?php echo base_url(); ?>assets/css/browser.css" rel="stylesheet" type="text/css" media="all">
@@ -53,8 +53,9 @@ if ($fileList !== 0):
                                     <!--dropdown search-->
                                     <select class="filter form-control" name="user" id="user">
                                         <option value="">Sort By User</option>
-                                        <?php foreach ($allUsers as $user): ?>
-                                            <option value="<?php echo $user->last_name ?>, <?php echo $user->first_name ?>">
+                                        <?php foreach ($allUsers as $user) : ?>
+                                            <option value="<?php echo $user->last_name ?>, 
+                                            <?php echo $user->first_name ?>">
                                                 <?php echo $user->last_name ?>,
                                                     <?php echo $user->first_name ?>
                                             </option>
@@ -66,57 +67,57 @@ if ($fileList !== 0):
                     </div>
                 </div>
                 <?php
-if (isset($fileList[0]->showCheckbox)):
-	if ($fileList[0]->showCheckbox === TRUE):
-		$form = 1;
-		?>
-				                    <div class="container">
-				                        <div class="row">
-				                            <div class="col-md-6 text-center">
-				                                <div id="trashDiv"><i id="trashCan" class="droppable fa fa-trash-o text-danger fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $trashCanTitle; ?>"></i></div>
-				                            </div>
-				                            <div class="col-md-6 text-center">
-				                                <div id="authorizeDiv"><i id="authorize" class="droppable fa fa-thumbs-o-up text-success fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $authorizeButtonTitle; ?>"></i></div>
-				                            </div>
-				                        </div>
-				                    </div>
-				                    <?php
-	endif;
-endif;?>
+                if (isset($fileList[0]->showCheckbox)) :
+                    if ($fileList[0]->showCheckbox === true) :
+                        $form = 1;
+                        ?>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6 text-center">
+                                <div id="trashDiv"><i id="trashCan" class="droppable fa fa-trash-o text-danger fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $trashCanTitle; ?>"></i></div>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <div id="authorizeDiv"><i id="authorize" class="droppable fa fa-thumbs-o-up text-success fa-4x" data-toggle="tooltip" data-placement="right" title="<?php echo $authorizeButtonTitle; ?>"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                    endif;
+                endif;?>
                         <div class="container-fluid">
                             <div class="row-fluid">
                                 <div class="filemanager">
                                     <ul class="data animated ">
-                                        <?php if (is_array($fileList)): ?>
+                                        <?php if (is_array($fileList)) : ?>
                                             <?php echo form_open('', 'class="form" method="post" id="mainForm"') ?>
                                                 <?php
-foreach ($fileList as $item):
+                                                foreach ($fileList as $item) :
 
-?>
+                                                ?>
                                                     <li class="files trashable" id="fileItem_<?php echo $item->id ?>" data-toggle="popover" title="<?php echo $item->fileName; ?>" data-content="<img src='<?php echo $item->thumbnail; ?>'>">
                                                         <a href="<?php echo $item->detailsLink ?>">
-                                                                                    <span class="icon file f-<?php echo $item->ext; ?>"><?php echo $item->ext; ?></span>
-                                                                                        <span class="name"><?php echo $item->fileName; ?></span>
-                                                                                            <span class="details">Size : <?php echo $item->fileSize; ?></span>
-                                                                                                    <input type="hidden" name="fileId" value="<?php echo $item->id ?>">
-                                                                                            <span class="description"><?php echo $item->description; ?></span>
-                                                                                                <span class="date">Created Date: <?php echo $item->createdDate; ?></span>
+<span class="icon file f-<?php echo $item->ext; ?>"><?php echo $item->ext; ?></span>
+<span class="name"><?php echo $item->fileName; ?></span>
+ <span class="details">Size : <?php echo $item->fileSize; ?></span>
+<input type="hidden" name="fileId" value="<?php echo $item->id ?>">
+ <span class="description"><?php echo $item->description; ?></span>
+ <span class="date">Created Date: <?php echo $item->createdDate; ?></span>
 
 
-                                                                                                    <span class="owner">Author: <?php echo $item->ownerName; ?></span>
+ <span class="owner">Author: <?php echo $item->ownerName; ?></span>
 
-                                                                                                    <span class="lock">
-                                                                                            <?php if ($item->lock == false): ?>
-                                                                                               <i class="fa fa-unlock fa-2x"></i>
-                                                                                            <?php else: ?>
+           <span class="lock">
+            <?php if ($item->lock == false) : ?>
+            <i class="fa fa-unlock fa-2x"></i>
+            <?php else : ?>
                     <i class="fa fa-lock fa-2x"></i>
             <?php endif;?>
             </span>
                  </a>
                                                     </li>
                                                     <?php
-endforeach;
-else: ?>
+                                                endforeach;
+else : ?>
                                                         <div class="container">
                                                             <div class="alert alert-danger" role="alert">
                                                                 <i class="fa fa-exclamation-triangle fa-2x"></i>
@@ -129,7 +130,7 @@ else: ?>
                                                         <?php
 endif;
 
-else:
+else :
 ?>
                                                             <div class="container">
                                                                 <div class="alert alert-danger" role="alert">
@@ -144,27 +145,27 @@ else:
 endif;
 ?>
                                     </ul>
-                                    <?php if (isset($form) != 1): ?>
+                                    <?php if (isset($form) != 1) : ?>
                                         </form>
                                         <?php endif;?>
                                 </div>
                             </div>
                             <?php
-if (isset($links)):
+                            if (isset($links)) :
 ?>
                                 <div class="row">
                                     <nav style="text-align:center;">
                                         <ul class="pagination">
                                             <?php
-echo $links
+                                            echo $links
 ?>
                                         </ul>
                                     </nav>
                                 </div>
                                 <?php
-endif;
+                            endif;
 ?>
-                                    <?php if (isset($limitReached)): ?>
+                                    <?php if (isset($limitReached)) : ?>
                                         <div class="text-warning">Maximum number of results have been returned.</div>
                                         <?php endif;?>
                         </div>

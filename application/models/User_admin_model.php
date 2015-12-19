@@ -1,63 +1,66 @@
 <?php
 
-Class User_Admin_Model extends CI_Model {
+class User_Admin_Model extends CI_Model
+{
 
-	public function createNewUser($formData) {
-		if (!$this->userObj->isAdmin()) {
-			echo json_encode(array('status' => 'error', 'msg' => 'You do not have permission to create a new user.'));
-			exit;
-		}
-		// Check to make sure user does not already exist
-		$userExists = User_model::exists($formData['username']);
 
-		// If the above statement returns more than 0 rows, the user exists, so display error
-		if ($userExists > 0) {
-			echo json_encode(array('status' => 'error', 'msg' => 'A user with that name already exists.'));
-			exit;
-		} else {
-			$phonenumber = @$formData['phone'];
-			if (!isset($formData['canAdd'])) {
-				$formData['canAdd'] = 0;
-			}
-			if (!isset($formData['canCheckin'])) {
-				$formData['canCheckin'] = 0;
-			}
-			$userArray = array(
-				'username' => $formData['username'],
-				'password' => User_Model::randomPassword(),
-				'department' => $formData['department'],
-				'phone' => $phonenumber,
-				'email' => $formData['email'],
-				'last_name' => $formData['last_name'],
-				'first_name' => $formData['first_name'],
-				'can_add' => $formData['canAdd'],
-				'can_checkin' => $formData['canCheckin'],
-				'pw_reset_code' => 1,
-			);
-			$userId = User_Model::createUser($userArray);
+    public function createNewUser($formData)
+    {
+        if (!$this->userObj->isAdmin()) {
+            echo json_encode(array('status' => 'error', 'msg' => 'You do not have permission to create a new user.'));
+            exit;
+        }
+        // Check to make sure user does not already exist
+        $userExists = User_model::exists($formData['username']);
 
-			if (!isset($formData['admin'])) {
-				$formData['admin'] = '0';
-			}
+        // If the above statement returns more than 0 rows, the user exists, so display error
+        if ($userExists > 0) {
+            echo json_encode(array('status' => 'error', 'msg' => 'A user with that name already exists.'));
+            exit;
+        } else {
+            $phonenumber = @$formData['phone'];
+            if (!isset($formData['canAdd'])) {
+                $formData['canAdd'] = 0;
+            }
+            if (!isset($formData['canCheckin'])) {
+                $formData['canCheckin'] = 0;
+            }
+            $userArray = array(
+                'username' => $formData['username'],
+                'password' => User_Model::randomPassword(),
+                'department' => $formData['department'],
+                'phone' => $phonenumber,
+                'email' => $formData['email'],
+                'last_name' => $formData['last_name'],
+                'first_name' => $formData['first_name'],
+                'can_add' => $formData['canAdd'],
+                'can_checkin' => $formData['canCheckin'],
+                'pw_reset_code' => 1,
+            );
+            $userId = User_Model::createUser($userArray);
 
-			$adminArray = array(
-				'id' => $userId,
-				'admin' => $formData['admin'],
-			);
+            if (!isset($formData['admin'])) {
+                $formData['admin'] = '0';
+            }
 
-			//Sets the correct admin settings for the new user
-			User_Model::newUserAdmin($adminArray);
+            $adminArray = array(
+                'id' => $userId,
+                'admin' => $formData['admin'],
+            );
 
-			if (isset($formData['departmentReview'])) {
-				for ($i = 0; $i < sizeof($formData['departmentReview']); $i++) {
-					$deptId = $formData['departmentReview'][$i];
-					$deptArray = array(
-						'dept_id' => $deptId,
-						'user_id' => $userId);
-					//sets the reviewer status for the new user
-					User_model::newUserReviewer($deptArray);
-				}
-			}
+            //Sets the correct admin settings for the new user
+            User_Model::newUserAdmin($adminArray);
+
+            if (isset($formData['departmentReview'])) {
+                for ($i = 0; $i < sizeof($formData['departmentReview']); $i++) {
+                    $deptId = $formData['departmentReview'][$i];
+                    $deptArray = array(
+                        'dept_id' => $deptId,
+                        'user_id' => $userId);
+                    //sets the reviewer status for the new user
+                    User_model::newUserReviewer($deptArray);
+                }
+            }
 /*
 // mail user telling him/her that his/her account has been created.
 $newUserObj = new User($userId, $pdo);
@@ -97,8 +100,7 @@ break;
 echo "Message sent!";
 }
  */
-		}
+        }
 
-	}
-
+    }
 }

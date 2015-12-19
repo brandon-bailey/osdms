@@ -1,59 +1,64 @@
 <?php
 
-Class Userpermission_Model extends CI_Model {
-	// public $userObj;
-	public $userPermsObj;
-	public $deptPermsObj;
+class Userpermission_Model extends CI_Model
+{
+    // public $userObj;
+    public $userPermsObj;
+    public $deptPermsObj;
 
-	public function __construct() {
-		parent::__construct();
-		$this->userPermsObj = new User_Perms_Model($this->session->id);
-		$this->deptPermsObj = new Dept_Perms_Model($this->session->department);
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->userPermsObj = new User_Perms_Model($this->session->id);
+        $this->deptPermsObj = new Dept_Perms_Model($this->session->department);
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= view_right) ID
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getAllowedFileIds($limit, $offset = NULL) {
-		$viewableArray = $this->getViewableFileIds($limit, $offset);
-		$readableArray = $this->getReadableFileIds($limit, $offset);
-		$writeableArray = $this->getWriteableFileIds($limit, $offset);
-		$adminableArray = $this->getAdminableFileIds($limit, $offset);
-		$resultArray = array_values(array_unique(array_merge($viewableArray, $readableArray, $writeableArray, $adminableArray)));
-		return $resultArray;
-	}
+    /**
+     * return an array of all the Allowed files ( right >= view_right) ID
+     * @param bool $limit
+     * @return array
+     */
+    public function getAllowedFileIds($limit, $offset = null)
+    {
+        $viewableArray = $this->getViewableFileIds($limit, $offset);
+        $readableArray = $this->getReadableFileIds($limit, $offset);
+        $writeableArray = $this->getWriteableFileIds($limit, $offset);
+        $adminableArray = $this->getAdminableFileIds($limit, $offset);
+        $resultArray = array_values(array_unique(array_merge($viewableArray, $readableArray, $writeableArray, $adminableArray)));
+        return $resultArray;
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= view_right) object
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getAllowedFileOBJs($limit = TRUE, $offset = NULL) {
-		return $this->convertToFileDataOBJ($this->getAllowedFileIds($limit, $offset));
-	}
+    /**
+     * return an array of all the Allowed files ( right >= view_right) object
+     * @param bool $limit
+     * @return array
+     */
+    public function getAllowedFileOBJs($limit = true, $offset = null)
+    {
+        return $this->convertToFileDataOBJ($this->getAllowedFileIds($limit, $offset));
+    }
 
-	/**
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getViewableFileIds($limit = NULL, $offset = NULL) {
-		//These 2 below takes half of the execution time for this function
-		$uP = ($this->userPermsObj->getCurrentViewOnly($limit, $offset));
-		$dP = ($this->deptPermsObj->getCurrentViewOnly($limit, $offset));
+    /**
+     * @param bool $limit
+     * @return array
+     */
+    public function getViewableFileIds($limit = null, $offset = null)
+    {
+        //These 2 below takes half of the execution time for this function
+        $uP = ($this->userPermsObj->getCurrentViewOnly($limit, $offset));
+        $dP = ($this->deptPermsObj->getCurrentViewOnly($limit, $offset));
 
-		if ($offset !== NULL) {
-			$offset = 'OFFSET ' . $offset;
-		} else {
-			$offset = '';
-		}
-		if ($limit !== NULL) {
-			$limit = 'LIMIT ' . $limit;
-		} else {
-			$limit = '';
-		}
-		$array = $this->db->query("
+        if ($offset !== null) {
+            $offset = 'OFFSET ' . $offset;
+        } else {
+            $offset = '';
+        }
+        if ($limit !== null) {
+            $limit = 'LIMIT ' . $limit;
+        } else {
+            $limit = '';
+        }
+        $array = $this->db->query("
               SELECT
                 up.fid as id
               FROM
@@ -61,150 +66,157 @@ Class Userpermission_Model extends CI_Model {
                " . $this->db->dbprefix('user_perms') . " up
               WHERE
                 (
-		up.uid = {$this->session->id}
-				  AND d.id = up.fid
-		AND up.rights < {$this->config->item('VIEW_RIGHT')}
-				  AND d.publishable = 1
-				  )
-		{$limit} {$offset}
+        up.uid = {$this->session->id}
+                  AND d.id = up.fid
+        AND up.rights < {$this->config->item('VIEW_RIGHT')}
+                  AND d.publishable = 1
+                  )
+        {$limit} {$offset}
             ");
 
-		$array = $array->result_array();
+        $array = $array->result_array();
 
-		if (is_array($array) && is_array($dP)) {
-			$totalListing = array_merge($dP, $array);
-			$newArray = array();
-			$usedFiles = array();
+        if (is_array($array) && is_array($dP)) {
+            $totalListing = array_merge($dP, $array);
+            $newArray = array();
+            $usedFiles = array();
 
-			foreach ($totalListing AS $line) {
-				if (!in_array($line['id'], $usedFiles)) {
-					$usedFiles[] = $line['id'];
-					$newArray[] = $line;
-				}
-			}
-			$dP = $newArray;
-			unset($newArray, $usedFiles);
-		}
+            foreach ($totalListing as $line) {
+                if (!in_array($line['id'], $usedFiles)) {
+                    $usedFiles[] = $line['id'];
+                    $newArray[] = $line;
+                }
+            }
+            $dP = $newArray;
+            unset($newArray, $usedFiles);
+        }
 
-		if (is_array($dP) && is_array($uP)) {
-			$totalListing = array_merge($uP, $dP);
-			$newArray = array();
-			$usedFiles = array();
+        if (is_array($dP) && is_array($uP)) {
+            $totalListing = array_merge($uP, $dP);
+            $newArray = array();
+            $usedFiles = array();
 
-			foreach ($totalListing AS $line) {
-				if (!in_array($line['id'], $usedFiles)) {
-					$usedFiles[] = $line['id'];
-					$newArray[] = $line;
-				}
-			}
-			$dP = $newArray;
-			unset($newArray, $usedFiles);
-			return $dP;
-		}
-	}
+            foreach ($totalListing as $line) {
+                if (!in_array($line['id'], $usedFiles)) {
+                    $usedFiles[] = $line['id'];
+                    $newArray[] = $line;
+                }
+            }
+            $dP = $newArray;
+            unset($newArray, $usedFiles);
+            return $dP;
+        }
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= view_right) OBJ
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getViewableFileOBJs($limit = TRUE, $offset = NULL) {
-		return $this->convertToFileDataOBJ($this->getViewableFileIds($limit, $offset));
-	}
+    /**
+     * return an array of all the Allowed files ( right >= view_right) OBJ
+     * @param bool $limit
+     * @return array
+     */
+    public function getViewableFileOBJs($limit = true, $offset = null)
+    {
+        return $this->convertToFileDataOBJ($this->getViewableFileIds($limit, $offset));
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= read_right) ID
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getReadableFileIds($limit = TRUE, $offset = NULL) {
-		$userPermsFileArray = $this->userPermsObj->getCurrentReadRight($limit, $offset);
-		$deptPermsFileArray = $this->deptPermsObj->getCurrentReadRight($limit, $offset);
-		$publishedFileArray = $this->userObj->getPublishedData(1);
-		$resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
-		return $resultArray;
-	}
+    /**
+     * return an array of all the Allowed files ( right >= read_right) ID
+     * @param bool $limit
+     * @return array
+     */
+    public function getReadableFileIds($limit = true, $offset = null)
+    {
+        $userPermsFileArray = $this->userPermsObj->getCurrentReadRight($limit, $offset);
+        $deptPermsFileArray = $this->deptPermsObj->getCurrentReadRight($limit, $offset);
+        $publishedFileArray = $this->userObj->getPublishedData(1);
+        $resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
+        return $resultArray;
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= read_right) OBJ
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getReadableFileOBJs($limit = TRUE, $offset = NULL) {
-		return $this->convertToFileDataOBJ($this->getReadableFileIds($limit, $offset));
-	}
+    /**
+     * return an array of all the Allowed files ( right >= read_right) OBJ
+     * @param bool $limit
+     * @return array
+     */
+    public function getReadableFileOBJs($limit = true, $offset = null)
+    {
+        return $this->convertToFileDataOBJ($this->getReadableFileIds($limit, $offset));
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= write_right) ID
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getWriteableFileIds($limit = TRUE, $offset = NULL) {
-		$userPermsFileArray = $this->userPermsObj->getCurrentWriteRight($limit, $offset);
-		$deptPermsFileArray = $this->deptPermsObj->getCurrentWriteRight($limit, $offset);
-		$publishedFileArray = $this->userObj->getPublishedData(1);
-		$resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
-		return $resultArray;
-	}
+    /**
+     * return an array of all the Allowed files ( right >= write_right) ID
+     * @param bool $limit
+     * @return array
+     */
+    public function getWriteableFileIds($limit = true, $offset = null)
+    {
+        $userPermsFileArray = $this->userPermsObj->getCurrentWriteRight($limit, $offset);
+        $deptPermsFileArray = $this->deptPermsObj->getCurrentWriteRight($limit, $offset);
+        $publishedFileArray = $this->userObj->getPublishedData(1);
+        $resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
+        return $resultArray;
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= write_right) ID
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getWriteableFileOBJs($limit = TRUE, $offset = NULL) {
-		return $this->convertToFileDataOBJ($this->getWriteableFileIds($limit, $offset));
-	}
+    /**
+     * return an array of all the Allowed files ( right >= write_right) ID
+     * @param bool $limit
+     * @return array
+     */
+    public function getWriteableFileOBJs($limit = true, $offset = null)
+    {
+        return $this->convertToFileDataOBJ($this->getWriteableFileIds($limit, $offset));
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= admin_right) ID
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getAdminableFileIds($limit = TRUE, $offset = NULL) {
-		$userPermsFileArray = $this->userPermsObj->getCurrentAdminRight($limit, $offset);
-		$deptPermsFileArray = $this->deptPermsObj->getCurrentAdminRight($limit, $offset);
-		$publishedFileArray = $this->userObj->getPublishedData(1);
-		$resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
-		return $resultArray;
-	}
+    /**
+     * return an array of all the Allowed files ( right >= admin_right) ID
+     * @param bool $limit
+     * @return array
+     */
+    public function getAdminableFileIds($limit = true, $offset = null)
+    {
+        $userPermsFileArray = $this->userPermsObj->getCurrentAdminRight($limit, $offset);
+        $deptPermsFileArray = $this->deptPermsObj->getCurrentAdminRight($limit, $offset);
+        $publishedFileArray = $this->userObj->getPublishedData(1);
+        $resultArray = array_values(array_unique(array_merge($publishedFileArray, $userPermsFileArray, $deptPermsFileArray)));
+        return $resultArray;
+    }
 
-	/**
-	 * return an array of all the Allowed files ( right >= admin_right) OBJ
-	 * @param bool $limit
-	 * @return array
-	 */
-	public function getAdminableFileOBJs($limit = TRUE, $offset = NULL) {
-		return $this->convertToFileDataOBJ($this->getAdminableFileIds($limit, $offset));
-	}
+    /**
+     * return an array of all the Allowed files ( right >= admin_right) OBJ
+     * @param bool $limit
+     * @return array
+     */
+    public function getAdminableFileOBJs($limit = true, $offset = null)
+    {
+        return $this->convertToFileDataOBJ($this->getAdminableFileIds($limit, $offset));
+    }
 
-	/**
-	 * getAuthority
-	 * Return the authority that this user have on file data_id
-	 * by combining and prioritizing user and department right
-	 * @param int $data_id
-	 * @return int
-	 */
-	public function getAuthority($dataId, $fileData) {
-		$dataId = (int) $dataId;
-		// $fileData = new Document_model($dataId);
+    /**
+     * getAuthority
+     * Return the authority that this user have on file data_id
+     * by combining and prioritizing user and department right
+     * @param int $data_id
+     * @return int
+     */
+    public function getAuthority($dataId, $fileData)
+    {
+        $dataId = (int) $dataId;
+        // $fileData = new Document_model($dataId);
 
-		if ($this->session->admin OR $this->userObj->isReviewerForFile($dataId)) {
-			return $this->config->item('ADMIN_RIGHT');
-		}
+        if ($this->session->admin or $this->userObj->isReviewerForFile($dataId)) {
+            return $this->config->item('ADMIN_RIGHT');
+        }
 
-		if ($fileData->isOwner($this->uid) && $fileData->isLocked()) {
-			return $this->config->item('WRITE_RIGHT');
-		}
+        if ($fileData->isOwner($this->uid) && $fileData->isLocked()) {
+            return $this->config->item('WRITE_RIGHT');
+        }
 
-		$userPermissions = $this->userPermsObj->getPermission($dataId);
-		$departmentPermissions = $this->deptPermsObj->getPermission($dataId);
+        $userPermissions = $this->userPermsObj->getPermission($dataId);
+        $departmentPermissions = $this->deptPermsObj->getPermission($dataId);
 
-		if ($userPermissions >= $this->config->item('NONE_RIGHT') and $userPermissions <= $this->config->item('ADMIN_RIGHT')) {
-			return $userPermissions;
-		} else {
-			return $departmentPermissions;
-		}
-	}
-
+        if ($userPermissions >= $this->config->item('NONE_RIGHT') and $userPermissions <= $this->config->item('ADMIN_RIGHT')) {
+            return $userPermissions;
+        } else {
+            return $departmentPermissions;
+        }
+    }
 }

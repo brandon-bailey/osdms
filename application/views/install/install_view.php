@@ -114,12 +114,18 @@ function submitUserSettings()
  	if(password == confirmPassword)
  	{
 		$.ajax({
-            url: '<?php echo site_url(); ?>install/userSettings',
+            url: '<?php echo site_url(); ?>install/createUser',
             type: "POST",
 			dataType:'json',
             data:  $('form#userSettingsForm').serialize(),
             success: function(data){
-				console.log(data);
+				if(data.status=="success"){
+                    alertify.log(data.msg);
+                }
+                else if (data.status == "error")
+                {
+                    alertify.error(data.msg);
+                }
             }
         });
 	}

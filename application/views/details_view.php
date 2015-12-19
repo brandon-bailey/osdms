@@ -1,21 +1,25 @@
 <div class="container">
     <div class="row">
         <div class="btn-group pull-right">
-            <a href="#" role="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><i class="fa fa-cogs"></i></a>
+            <a href="#" role="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-cogs"></i></a>
             <ul class="dropdown-menu" role="menu">
-                <?php if ($fileDetail->viewInBrowser !== NULL): ?>
+                <?php if ($fileDetail->viewInBrowser !== null) : ?>
                     <li><a href="#" id="pdfPreview" data-toggle="modal" data-target="#previewPDF"> View</a></li>
                     <?php endif;?>
-                        <?php if ($fileDetail->checkOutLink !== ''): ?>
+                        <?php if ($fileDetail->checkOutLink !== '') : ?>
                             <input type="hidden" name="access_right" value="<?php echo $fileDetail->accessRight ?>">
                             <li><a href="<?php echo $fileDetail->checkOutLink; ?>" id="checkOut">Check Out</a></li>
                             <?php endif;?>
-                                <?php if ($fileDetail->editFileLink !== NULL): ?>
-                                    <li><a id="fileEditor" href="#" rel="<?php echo $fileDetail->editFileLink ?>"> Edit File <?php echo $fileDetail->fileInfo; ?></a></li>
+                                <?php if ($fileDetail->editFileLink !== null) : ?>
+                                    <li><a id="fileEditor" href="#" rel="<?php echo $fileDetail->editFileLink ?>"> 
+                                    Edit File <?php echo $fileDetail->fileInfo; ?></a></li>
                                     <?php endif;?>
-                                        <?php if ($fileDetail->editLink !== ''): ?>
-                                            <li><a href="<?php echo $fileDetail->editLink; ?>">Edit File Details</a></li>
-                                            <?php if ($fileDetail->deleteLink !== 0): ?>
+                                    <!-- Need to finish debugging the edit file details page before enabling. -->
+                                        <?php if ($fileDetail->editLink !== '') : ?>                                            
+                                            <!--<li><a href="<?php echo $fileDetail->editLink; ?>">
+                                            Edit File Details</a></li>-->
+                                            <?php if ($fileDetail->deleteLink !== 0) : ?>
                                                 <li><a href="#" id="delete">Delete</a></li>
                                                 <?php endif;?>
                                                     <li><a href="#" id="thumbnail">Create Thumbnail</a></li>
@@ -35,9 +39,9 @@
                 <table class="table table-striped">
                     <tr>
                         <td align="right">
-                            <?php if ($fileDetail->fileUnlocked): ?>
+                            <?php if ($fileDetail->fileUnlocked) : ?>
                                 <i class="fa fa-unlock fa-2x"></i>
-                                <?php else: ?>
+                                <?php else : ?>
                                     <i class="fa fa-lock fa-2x"></i>
                                     <?php endif;?>
                         </td>
@@ -69,13 +73,13 @@
                     <tr>
                         <th valign=top align=right>Original:</th>
                         <td>
-                            <?php if ($fileDetail->viewInBrowser !== NULL): ?>
+                            <?php if ($fileDetail->viewInBrowser !== null) : ?>
                                 <a href="#" id="pdfPreview" data-toggle="modal" data-target="#previewPDF">
                                     <i class="fa fa-file-code-o fa-lg"></i>
                                     <small> View in Browser</small>
                                 </a>
                                 <?php endif;?>
-                                    <?php if ($fileDetail->ext == "png" || $fileDetail->ext == "jpg"): ?>
+                                    <?php if ($fileDetail->ext == "png" || $fileDetail->ext == "jpg") : ?>
                                         <a href="#" id="imagePreview" data-toggle="modal" data-target="#previewImage">
                                             <i class="fa fa-image fa-lg"></i>
                                             <small> View in Browser</small>
@@ -111,14 +115,14 @@
                             </div>
                         </td>
                     </tr>
-                    <?php if ($fileDetail->fileUnderReview): ?>
+                    <?php if ($fileDetail->fileUnderReview) : ?>
                         <tr>
                             <th valign=top align=right>Reviewer:</th>
                             <td>
                                 <?php echo $fileDetail->reviewer ?> (<a href="#">Comments</a>)</td>
                         </tr>
                         <?php endif;?>
-                            <?php if ($fileDetail->status > 0): ?>
+                            <?php if ($fileDetail->status > 0) : ?>
                                 <tr>
                                     <th valign=top align=right>Checked out to:</th>
                                     <td>
@@ -156,34 +160,34 @@
                         </thead>
                         <tbody>
                             <?php
-if (isset($fileDetail->fileHistory)):
-	foreach ($fileDetail->fileHistory as $item): ?>
-								                                <tr>
-								                                    <td>
-								                                        <font size="-1">
+                            if (isset($fileDetail->fileHistory)) :
+                                foreach ($fileDetail->fileHistory as $item) : ?>
+                                                                <tr>
+                                                                    <td>
+                                                                        <font size="-1">
 								                                            <?php echo $item->revision ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
+                                                                        </font>
+                                                                    </td>
+                                                                    <td>
+                                                                        <font size="-1">
 								                                            <?php echo $item->modifiedOn ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
+                                                                        </font>
+                                                                    </td>
+                                                                    <td>
+                                                                        <font size="-1">
 								                                            <?php echo $item->firstName ?>
 								                                                <?php echo $item->lastName ?>
-								                                        </font>
-								                                    </td>
-								                                    <td>
-								                                        <font size="-1">
+                                                                        </font>
+                                                                    </td>
+                                                                    <td>
+                                                                        <font size="-1">
 								                                            <?php echo $item->note ?>
-								                                        </font>
-								                                    </td>
-								                                </tr>
+                                                                        </font>
+                                                                    </td>
+                                                                </tr>
 								                                <?php
-endforeach;
-endif;
+                                endforeach;
+                            endif;
 ?>
                         </tbody>
                     </table>
@@ -192,7 +196,7 @@ endif;
         </div>
     </div>
 </div>
-<?php include APPPATH . 'views/preview_pdf_view.php'?>
+<?php include(APPPATH . 'views/preview_pdf_view.php');?>
     <script>
     $(document).ready(function() {
         $('#fileTable').DataTable();
