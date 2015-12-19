@@ -17,6 +17,11 @@ The final intent of this project will be to have a self hosted "Dropbox" or "Goo
 
 There is currently no working installation script.
 This is under development. 
+
+Default Login:
+Username: admin
+Password: password
+
 If you want to get going right away, you will need to create your database on your own.
 Once the database exists, import the SQL file located at 
 ["/assets/database/dms_database.sql"](https://github.com/brandon-bailey/osdms/blob/master/assets/database/dms_database.sql)
